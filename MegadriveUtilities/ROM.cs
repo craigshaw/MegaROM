@@ -70,8 +70,8 @@ namespace MegadriveUtilities
 
         private UInt32 GetUInt32(uint offset)
         {
-            if (offset > rom.Length)
-                throw new ArgumentException("offset > rom length", "offset");
+            if (offset >= rom.Length)
+                throw new ArgumentException("offset >= rom length", "offset");
 
             byte[] bytes = new byte[4];
             Array.Copy(rom, offset, bytes, 0, 4);
