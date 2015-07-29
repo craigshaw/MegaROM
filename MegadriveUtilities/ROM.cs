@@ -27,7 +27,16 @@ namespace MegadriveUtilities
                 throw new ArgumentNullException("loader");
 
             this.loader = loader;
-            this.rom = loader.LoadROM();
+        }
+
+        public async Task LoadAsync()
+        {
+            rom = await loader.LoadROMAsync();
+        }
+
+        public async Task SaveAsync()
+        {
+            await loader.SaveROMAsync(this.rom, true);
         }
 
         public T GetValue<T>(uint offset) where T : struct
@@ -171,11 +180,6 @@ namespace MegadriveUtilities
             }
 
             Array.Copy(bytes, 0, rom, offset, bytes.Length);
-        }
-
-        public void Save()
-        {
-            loader.SaveROM(this.rom);
         }
     }
 }

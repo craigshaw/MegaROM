@@ -20,10 +20,11 @@ namespace TestHarness
             Console.ReadKey();
         }
 
-        private void Run(string romPath)
+        private async void Run(string romPath)
         {
             // Load ROM content
             ROM rom = new ROM(new ROMLoader(romPath));
+            await rom.LoadAsync();
 
             Console.WriteLine("System is {0} endian", BitConverter.IsLittleEndian ? "little" : "big");
             Console.WriteLine("Loaded ROM {0}", romPath);
@@ -40,6 +41,8 @@ namespace TestHarness
 
             UInt16 check = rom.GetValue<UInt16>(0x18E);
             Console.WriteLine("Checksum (from generic method): 0x{0:X}", check);
+
+            //await rom.SaveAsync();
         }
     }
 
