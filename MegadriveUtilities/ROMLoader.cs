@@ -28,36 +28,8 @@ namespace MegadriveUtilities
             {
                 byte[] rom = new byte[fs.Length];
                 await fs.ReadAsync(rom, 0, rom.Length);
-
-                // Not sure I like this here.
-                ValidateROM(rom);
-
                 return rom;
             }
-        }
-
-        private void ValidateROM(byte[] rom)
-        {
-            if (!(Compare(rom, 0x100, Encoding.ASCII.GetBytes("SEGA GENESIS"))
-                ||Compare(rom, 0x100, Encoding.ASCII.GetBytes("SEGA MEGADRIVE"))))
-                throw new ApplicationException("Invalid ROM format");
-        }
-
-        private unsafe bool Compare(byte[] source, uint sourceOffset, byte[] compareTo)
-        {
-            fixed (byte* arrayPtr = &source[sourceOffset])
-            {
-                byte* currentByte = arrayPtr;
-                for (int i = 0; i < compareTo.Length; i++)
-                {
-                    if (*currentByte != compareTo[i])
-                        return false;
-
-                    currentByte++;
-                }
-            }
-
-            return true;
         }
 
         public async Task SaveROMAsync(byte[] romData, bool backupOriginal)

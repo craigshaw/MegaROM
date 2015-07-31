@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace MegadriveUtilities
 {
-    internal delegate T ConversionDelegate<T>(byte[] data, int offset);
+    internal delegate T Conversion<T>(byte[] data, int offset);
 
     /// <summary>
     /// Utility class representing a Megadrive ROM
@@ -32,6 +32,8 @@ namespace MegadriveUtilities
         public async Task LoadAsync()
         {
             rom = await loader.LoadROMAsync();
+
+            ValidateROM();
         }
 
         public async Task SaveAsync()
@@ -77,6 +79,30 @@ namespace MegadriveUtilities
             }
         }
 
+        private void ValidateROM()
+        {
+            if (!(CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA GENESIS"))
+                || CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA MEGADRIVE"))))
+                throw new ApplicationException("Invalid ROM format");
+        }
+
+        private unsafe bool CompareBytesAt(uint offset, byte[] compareTo)
+        {
+            fixed (byte* arrayPtr = &rom[offset])
+            {
+                byte* currentByte = arrayPtr;
+                for (int i = 0; i < compareTo.Length; i++)
+                {
+                    if (*currentByte != compareTo[i])
+                        return false;
+
+                    currentByte++;
+                }
+            }
+
+            return true;
+        }
+
         private UInt32 GetUInt32(uint offset)
         {
             if (offset >= rom.Length)
@@ -98,7 +124,7 @@ namespace MegadriveUtilities
             return GetValueFromROM<UInt32>(offset, (data, index) => BitConverter.ToUInt32(data, index));
         }
 
-        private T GetValueFromROM<T>(uint offset, ConversionDelegate<T> conversion)
+        private T GetValueFromROM<T>(uint offset, Conversion<T> conversion)
         {
             if (offset >= rom.Length)
                 throw new ArgumentException("offset >= rom length", "offset");
