@@ -11,7 +11,7 @@ namespace MegadriveUtilities
     /// </summary>
     public interface IROMLoader
     {
-        Task<byte[]> LoadROMAsync();
+        Task<BigEndianBinaryAccessor> LoadROMAsync();
         Task SaveROMAsync(byte[] romData, bool backupOriginal=false);
     }
 }

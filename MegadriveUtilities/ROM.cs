@@ -15,7 +15,7 @@ namespace MegadriveUtilities
     /// </summary>
     public class ROM
     {
-        private byte[] rom;
+        private BigEndianBinaryAccessor rom;
         private ushort checksum;
         private uint startAddress = 0xFFFFFFFF;
         private uint endAddress;
@@ -32,18 +32,11 @@ namespace MegadriveUtilities
         public async Task LoadAsync()
         {
             rom = await loader.LoadROMAsync();
-
-            ValidateROM();
         }
 
         public async Task SaveAsync()
         {
-            await loader.SaveROMAsync(this.rom, true);
-        }
-
-        public T GetValue<T>(uint offset) where T : struct
-        {
-            return GetValueImpl<T>(offset);
+            await loader.SaveROMAsync(this.rom.BinaryData, true);
         }
 
         public UInt16 Checksum
@@ -51,7 +44,7 @@ namespace MegadriveUtilities
             get
             {
                 if (checksum == 0)
-                    checksum = GetUInt16(0x18E);
+                    checksum = rom.GetUInt16(0x18E);
 
                 return checksum;
             }
@@ -62,7 +55,7 @@ namespace MegadriveUtilities
             get
             {
                 if (startAddress == 0xFFFFFFFF)
-                    startAddress = GetUInt(0x01A0);
+                    startAddress = rom.GetUInt32(0x01A0);
                 
                 return startAddress;
             }
@@ -73,105 +66,21 @@ namespace MegadriveUtilities
             get
             {
                 if (endAddress == 0x00000000)
-                    endAddress = GetUInt(0x01A4);
+                    endAddress = rom.GetUInt32(0x01A4);
 
                 return endAddress;
             }
         }
 
-        private void ValidateROM()
-        {
-            if (!(CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA GENESIS"))
-                || CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA MEGADRIVE"))))
-                throw new ApplicationException("Invalid ROM format");
-        }
-
-        private unsafe bool CompareBytesAt(uint offset, byte[] compareTo)
-        {
-            fixed (byte* arrayPtr = &rom[offset])
-            {
-                byte* currentByte = arrayPtr;
-                for (int i = 0; i < compareTo.Length; i++)
-                {
-                    if (*currentByte != compareTo[i])
-                        return false;
-
-                    currentByte++;
-                }
-            }
-
-            return true;
-        }
-
-        private UInt32 GetUInt32(uint offset)
-        {
-            if (offset >= rom.Length)
-                throw new ArgumentException("offset >= rom length", "offset");
-
-            byte[] bytes = new byte[4];
-            Array.Copy(rom, offset, bytes, 0, 4);
-            Array.Reverse(bytes);
-            return BitConverter.ToUInt32(bytes, 0);
-        }
-
-        private UInt16 GetUInt16(uint offset)
-        {
-            return GetValueFromROM<UInt16>(offset, (data, index) => BitConverter.ToUInt16(data, index));
-        }
-
-        private UInt32 GetUInt(uint offset)
-        {
-            return GetValueFromROM<UInt32>(offset, (data, index) => BitConverter.ToUInt32(data, index));
-        }
-
-        private T GetValueFromROM<T>(uint offset, Conversion<T> conversion)
-        {
-            if (offset >= rom.Length)
-                throw new ArgumentException("offset >= rom length", "offset");
-
-            int typeSize = Marshal.SizeOf(typeof(T));
-            byte[] bytes = new byte[typeSize];
-            Array.Copy(rom, offset, bytes, 0, typeSize);
-            Array.Reverse(bytes);
-            return conversion(bytes, 0);
-        }
-
-        private T GetValueImpl<T>(uint offset) where T : struct
-        {
-            int typeSize = Marshal.SizeOf(typeof(T));
-            UInt64 temp = 0;
-
-            for (int i = typeSize - 1, j = 0; i >= 0; i--, j++)
-            {
-                temp |= (UInt64)rom[offset + i] << (j << 3);
-            }
-
-            return (T)Convert.ChangeType(temp, typeof(T));
-        }
-
-        // Would love to get this generic get value working. Not sure it's going to be possible with the restrictions
-        // of bitwise operators on generic types
-        //private T GetValue<T>(uint offset) where T : struct
-        //{
-        //    int typeSize = Marshal.SizeOf(typeof(T));
-        //    T value = default(T);
-
-        //    for (int i = typeSize - 1; i >= 0; i--)
-        //    {
-        //        value |= rom[offset + i] << (8 * i);
-        //    }
-
-        //    return value;
-        //}
-
         public UInt16 CalculateChecksum()
         {
             UInt16 workingChecksum = 0;
+            byte[] raw = rom.BinaryData;
 
-            for (int index = 0x200; index < rom.Length; index += 2)
+            for (int index = 0x200; index < raw.Length; index += 2)
             {
-                workingChecksum += (UInt16)(rom[index] * 0x100);
-                workingChecksum += rom[index + 1];
+                workingChecksum += (UInt16)(raw[index] * 0x100);
+                workingChecksum += raw[index + 1];
             }
 
             return (UInt16)workingChecksum;
@@ -184,7 +93,7 @@ namespace MegadriveUtilities
 
             output.Append("byte[] romData = {" + Environment.NewLine);
 
-            foreach(byte b in rom)
+            foreach(byte b in rom.BinaryData)
             {
                 output.AppendFormat("0x{0:X},{1}", b, (count++ % 20 == 0) ? Environment.NewLine : " ");
             }
@@ -194,18 +103,23 @@ namespace MegadriveUtilities
             return output.ToString();
         }
 
-        public void SetValue<T>(uint offset, T value) where T : struct
+        public UInt16 GetUInt16(uint offset)
         {
-            int typeSize = Marshal.SizeOf(typeof(T));
-            byte[] bytes = new byte[typeSize];
-            UInt64 temp = (UInt64)Convert.ChangeType(value, typeof(UInt64));
-
-            for (int i = 0; i < typeSize; i++)
-            {
-                bytes[i] = (byte)(temp >> ((typeSize - 1 - i) * 8));
-            }
-
-            Array.Copy(bytes, 0, rom, offset, bytes.Length);
+            return rom.GetUInt16(offset);
         }
+
+        //public void SetValue<T>(uint offset, T value) where T : struct
+        //{
+        //    int typeSize = Marshal.SizeOf(typeof(T));
+        //    byte[] bytes = new byte[typeSize];
+        //    UInt64 temp = (UInt64)Convert.ChangeType(value, typeof(UInt64));
+
+        //    for (int i = 0; i < typeSize; i++)
+        //    {
+        //        bytes[i] = (byte)(temp >> ((typeSize - 1 - i) * 8));
+        //    }
+
+        //    Array.Copy(bytes, 0, rom, offset, bytes.Length);
+        //}
     }
 }

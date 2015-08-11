@@ -10,11 +10,11 @@ namespace MegadriveUtilities
     /// <summary>
     /// Loads ROMs from file system. Currently only supports raw .bin formats
     /// </summary>
-    public class ROMLoader : IROMLoader
+    public class BinROMLoader : IROMLoader
     {
         private string romPath;
 
-        public ROMLoader(string romPath)
+        public BinROMLoader(string romPath)
         {
             if (!File.Exists(romPath))
                 throw new ArgumentException("ROM file must exist", "romPath");
@@ -22,14 +22,24 @@ namespace MegadriveUtilities
             this.romPath = romPath;
         }
 
-        public async Task<byte[]> LoadROMAsync()
+        public async Task<BigEndianBinaryAccessor> LoadROMAsync()
         {
             using(FileStream fs = new FileStream(romPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
             {
                 byte[] rom = new byte[fs.Length];
                 await fs.ReadAsync(rom, 0, rom.Length);
-                return rom;
+
+                BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(rom);
+
+                return accessor;
             }
+        }
+
+        private void ValidateROM(BigEndianBinaryAccessor accessor)
+        {
+            if (!(accessor.CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA GENESIS"))
+                || accessor.CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA MEGADRIVE"))))
+                throw new ApplicationException("Invalid ROM format");
         }
 
         public async Task SaveROMAsync(byte[] romData, bool backupOriginal)

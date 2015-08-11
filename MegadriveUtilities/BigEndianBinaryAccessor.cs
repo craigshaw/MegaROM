@@ -19,6 +19,11 @@ namespace MegadriveUtilities
             this.binData = binData;
         }
 
+        public byte[] BinaryData
+        {
+            get { return binData;  }
+        }
+
         // Can't get this to worked with signed values, int16 and int32
         //public T GetValue<T>(uint offset) where T : struct
         //{

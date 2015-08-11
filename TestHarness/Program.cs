@@ -25,7 +25,7 @@ namespace TestHarness
             try
             {
                 // Load ROM content
-                ROM rom = new ROM(new ROMLoader(romPath));
+                ROM rom = new ROM(new BinROMLoader(romPath));
                 await rom.LoadAsync();
 
                 Console.WriteLine("System is {0} endian", BitConverter.IsLittleEndian ? "little" : "big");
@@ -38,15 +38,15 @@ namespace TestHarness
                 Console.WriteLine("Calculated Checksum: 0x{0:X}", rom.CalculateChecksum());
 
                 // Get, then update the master code
-                UInt16 masterCode = rom.GetValue<UInt16>(0xFF888);
+                UInt16 masterCode = rom.GetUInt16(0xFF888);
                 Console.WriteLine("Current Master Code: 0x{0:X}", masterCode);
 
-                UInt16 check = rom.GetValue<UInt16>(0x18E);
+                UInt16 check = rom.GetUInt16(0x18E);
                 Console.WriteLine("Checksum (from generic method): 0x{0:X}", check);
 
                 //await rom.SaveAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Error: {0}", ex.Message);
             }
