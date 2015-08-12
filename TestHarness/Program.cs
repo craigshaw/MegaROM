@@ -25,7 +25,7 @@ namespace TestHarness
             try
             {
                 // Load ROM content
-                ROM rom = new ROM(new BinROMLoader(romPath));
+                ROM rom = new ROM(new BinROMLoader(romPath, new BinROMValidator()));
                 await rom.LoadAsync();
 
                 Console.WriteLine("System is {0} endian", BitConverter.IsLittleEndian ? "little" : "big");

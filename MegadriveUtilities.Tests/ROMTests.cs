@@ -19,11 +19,9 @@ namespace MegadriveUtilities.Tests
         }
 
         [TestMethod]
-        public async Task LoadAsync()
+        public async Task LoadAsyncLoadsWhenGivenALoader()
         {
             var loader = A.Fake<IROMLoader>();
-
-            A.CallTo(() => loader.LoadROMAsync()).Returns(new BigEndianBinaryAccessor(new byte[] { 0x01, 0x02, 0x03 }));
 
             ROM rom = new ROM(loader);
 
