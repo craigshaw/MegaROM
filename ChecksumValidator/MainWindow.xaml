@@ -7,15 +7,12 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
         Title="ROM" Height="350" Width="211" ResizeMode="NoResize" ShowIconOnTitleBar="True">
-    <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.Open" Executed="OpenROM" CanExecute="OpenROM_CanExecute" />
-    </Window.CommandBindings>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="open" Command="ApplicationCommands.Open" />
+            <Button Content="open" Command="{Binding OpenCommand}" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
     <StackPanel Name="OutputPanel" Orientation="Vertical">
-        
+        <TextBlock Text="{Binding ValidationResult}"/>
     </StackPanel>
 </Controls:MetroWindow>
