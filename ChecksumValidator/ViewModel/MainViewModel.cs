@@ -10,9 +10,9 @@ namespace ChecksumValidator
     internal class MainViewModel : Observable
     {
         private ICommand openCommand;
-        private string validationResult;
+        private ROMValidationResult validationResult;
 
-        public string ValidationResult
+        public ROMValidationResult ValidationResult
         {
             get { return validationResult; }
 

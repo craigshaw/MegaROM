@@ -19,9 +19,10 @@ namespace ChecksumValidator.Model
             this.romPath = romPath;
         }
 
-        public async Task<string> ValidateROM()
+        public async Task<ROMValidationResult> ValidateROM()
         {
-            string result = "Invalid";
+            string result = "OK";
+            string resultText = "Invalid";
             try
             {
                 ROM rom = new ROM(new BinROMLoader(romPath, new BinROMValidator()));
@@ -31,14 +32,19 @@ namespace ChecksumValidator.Model
                 UInt16 calculatedChecksum = rom.CalculateChecksum();
 
                 if (checksum == calculatedChecksum)
-                    result = "Valid";
+                    resultText = "Valid";
+                else
+                {
+                    // Update ROM here
+                }
             }
             catch (Exception ex)
             {
-                result = string.Format("Failed with: {0}", ex.Message);
+                result = "Failed";
+                resultText = string.Format("Failed with: {0}", ex.Message);
             }
 
-            return result;
+            return new ROMValidationResult() { Result = result, ResultText = resultText };
         }
     }
 }
