@@ -11,7 +11,7 @@
             <Button Content="open" Command="{Binding OpenCommand}" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
-    <StackPanel Name="OutputPanel" Orientation="Vertical" Background="IndianRed">
+    <StackPanel Name="OutputPanel" Orientation="Vertical" >
         <TextBlock Text="{Binding ValidationResult.ResultText}"/>
     </StackPanel>
 </Controls:MetroWindow>

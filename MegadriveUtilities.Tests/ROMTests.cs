@@ -11,14 +11,14 @@ namespace MegadriveUtilities.Tests
     [TestClass]
     public class ROMTests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("ROM")]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowsWhenGivenANullLoader()
         {
             ROM rom = new ROM(null);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("ROM")]
         public async Task LoadAsyncLoadsWhenGivenALoader()
         {
             var loader = A.Fake<IROMLoader>();

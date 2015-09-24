@@ -7,21 +7,21 @@ namespace MegadriveUtilities.Tests
     [TestClass]
     public class BigEndianBinaryAccessorTests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         public void ConstructsWithByteArray()
         {
             BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(Encoding.ASCII.GetBytes("Testing construction"));
             Assert.IsNotNull(accessor);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThrowsWhenConstructedWithNull()
         {
             BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(null);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         public void GetsUInt16()
         {
             byte[] testData = new byte[] { 0xea, 0x60 };
@@ -30,7 +30,7 @@ namespace MegadriveUtilities.Tests
             Assert.AreEqual(60000, result);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         public void GetsInt16()
         {
             byte[] testData = new byte[] { 0xD8, 0xF0 };
@@ -39,7 +39,7 @@ namespace MegadriveUtilities.Tests
             Assert.AreEqual(-10000, result);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         public void GetsUInt32()
         {
             UInt32 expectedResult = 2147483647;
@@ -49,7 +49,7 @@ namespace MegadriveUtilities.Tests
             Assert.AreEqual(expectedResult, result);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         public void GetsInt32()
         {
             Int32 expectedResult = -2000000;
@@ -59,7 +59,7 @@ namespace MegadriveUtilities.Tests
             Assert.AreEqual(expectedResult, result);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         [ExpectedException(typeof(ArgumentException))]
         public void GetXIntXXThrowsIfOffsetIsInvalid()
         {
@@ -67,8 +67,8 @@ namespace MegadriveUtilities.Tests
             Int16 invalid = accessor.GetInt16(UInt16.MaxValue);
         }
 
-        [TestMethod]
-        public void CompareBytesAtReturnsTrueWhenMatchedBytes()
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void CompareBytesAtReturnsTrueWhenBytesMatch()
         {
             string testData = "Some test data for this unit test";
             string match = "unit test";
@@ -76,8 +76,8 @@ namespace MegadriveUtilities.Tests
             Assert.IsTrue(accessor.CompareBytesAt(0x18, Encoding.ASCII.GetBytes(match)));
         }
 
-        [TestMethod]
-        public void CompareBytesAtReturnsFasleWhenNotMatching()
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void CompareBytesAtReturnsFalseWhenBytesDontMatch()
         {
             string testData = "Some test data for this unit test";
             string match = "unit test";
@@ -85,7 +85,7 @@ namespace MegadriveUtilities.Tests
             Assert.IsFalse(accessor.CompareBytesAt(0x10, Encoding.ASCII.GetBytes(match)));
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("BinaryAccessor")]
         [ExpectedException(typeof(ArgumentException))]
         public void CompareBytesThrowsArgumentExceptionIfInvalidOffsetGiven()
         {
