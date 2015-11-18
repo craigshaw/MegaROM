@@ -10,11 +10,8 @@ namespace MegadriveUtilities
     {
         public bool IsValidROM(BigEndianBinaryAccessor accessor)
         {
-            if (!(accessor.CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA GENESIS"))
-                || accessor.CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA MEGADRIVE"))))
-                return false;
-
-            return true;
+            return (accessor.CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA GENESIS"))
+                || accessor.CompareBytesAt(0x100, Encoding.ASCII.GetBytes("SEGA MEGADRIVE")));
         }
     }
 }

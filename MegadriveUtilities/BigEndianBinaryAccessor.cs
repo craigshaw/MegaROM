@@ -58,6 +58,23 @@ namespace MegadriveUtilities
             return GetValueFromROM<Int32>(offset, (data, index) => BitConverter.ToInt32(data, index));
         }
 
+        public unsafe void SetValue<T>(T value, uint offset) where T : struct
+        {
+            int typeSize = Marshal.SizeOf(typeof(T));
+            UInt64 temp = (UInt64)Convert.ChangeType(value, typeof(UInt64));
+
+            fixed (byte* bufferPtr = &binData[offset])
+            {
+                byte* currentByte = bufferPtr;
+                for (int i = 0; i < typeSize; i++)
+                {
+                    *currentByte = (byte)(temp >> ((typeSize - 1 - i) * 8));
+                    currentByte++;
+                }
+
+            }
+        }
+
         public unsafe bool CompareBytesAt(uint offset, byte[] compareTo)
         {
             if (offset >= binData.Length)
@@ -89,5 +106,19 @@ namespace MegadriveUtilities
             Array.Reverse(bytes);
             return conversion(bytes, 0);
         }
+
+        //public void SetValue<T>(uint offset, T value) where T : struct
+        //{
+        //    int typeSize = Marshal.SizeOf(typeof(T));
+        //    byte[] bytes = new byte[typeSize];
+        //    UInt64 temp = (UInt64)Convert.ChangeType(value, typeof(UInt64));
+
+        //    for (int i = 0; i < typeSize; i++)
+        //    {
+        //        bytes[i] = (byte)(temp >> ((typeSize - 1 - i) * 8));
+        //    }
+
+        //    Array.Copy(bytes, 0, rom, offset, bytes.Length);
+        //}
     }
 }

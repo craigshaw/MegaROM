@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 
 namespace MegadriveUtilities
 {
@@ -36,7 +33,7 @@ namespace MegadriveUtilities
 
         public async Task SaveAsync()
         {
-            await loader.SaveROMAsync(this.rom.BinaryData, true);
+            await loader.SaveROMAsync(rom.BinaryData, true);
         }
 
         public UInt16 Checksum
@@ -108,18 +105,9 @@ namespace MegadriveUtilities
             return rom.GetUInt16(offset);
         }
 
-        //public void SetValue<T>(uint offset, T value) where T : struct
-        //{
-        //    int typeSize = Marshal.SizeOf(typeof(T));
-        //    byte[] bytes = new byte[typeSize];
-        //    UInt64 temp = (UInt64)Convert.ChangeType(value, typeof(UInt64));
-
-        //    for (int i = 0; i < typeSize; i++)
-        //    {
-        //        bytes[i] = (byte)(temp >> ((typeSize - 1 - i) * 8));
-        //    }
-
-        //    Array.Copy(bytes, 0, rom, offset, bytes.Length);
-        //}
+        public void SetValue<T>(T value, uint offset) where T : struct
+        {
+            rom.SetValue(value, offset);
+        }
     }
 }

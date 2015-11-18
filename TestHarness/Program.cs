@@ -44,6 +44,10 @@ namespace TestHarness
                 UInt16 check = rom.GetUInt16(0x18E);
                 Console.WriteLine("Checksum (from generic method): 0x{0:X}", check);
 
+                rom.SetValue(rom.CalculateChecksum(), 0x18E);
+
+                Console.WriteLine("Checksum: 0x{0:X}", rom.Checksum);
+
                 //await rom.SaveAsync();
             }
             catch (Exception ex)
