@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
+using System.Linq;
 
 namespace MegadriveUtilities.Tests
 {
@@ -92,6 +93,83 @@ namespace MegadriveUtilities.Tests
             string testData = "Some test data for this unit test";
             BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(Encoding.ASCII.GetBytes(testData));
             Assert.IsFalse(accessor.CompareBytesAt(0xFFFF, Encoding.ASCII.GetBytes("test")));
+        }
+
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void SetsUint16()
+        {
+            UInt16 testValue = 0x846A;
+            byte[] testData = new byte[2];
+            BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(testData);
+
+            accessor.SetValue(testValue, 0);
+
+            Assert.AreEqual(0x84, testData[0]);
+            Assert.AreEqual(0x6A, testData[1]);
+        }
+
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void SetsInt16()
+        {
+            Int16 testValue = 16416; // 0x4020
+            byte[] testData = new byte[2];
+            BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(testData);
+
+            accessor.SetValue(testValue, 0);
+
+            Assert.AreEqual(0x40, testData[0]);
+            Assert.AreEqual(0x20, testData[1]);
+        }
+
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void SetsInt32()
+        {
+            Int32 testValue = 68157953; // 0x04100201
+            byte[] testData = new byte[4];
+            BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(testData);
+
+            accessor.SetValue(testValue, 0);
+
+            Assert.AreEqual(0x04, testData[0]);
+            Assert.AreEqual(0x10, testData[1]);
+            Assert.AreEqual(0x02, testData[2]);
+            Assert.AreEqual(0x01, testData[3]);
+        }
+
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void SetsUint32()
+        {
+            UInt32 testValue = 0xFFDFF63C; //-2099652
+            byte[] testData = new byte[4];
+            BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(testData);
+
+            accessor.SetValue(testValue, 0);
+
+            Assert.AreEqual(0xFF, testData[0]);
+            Assert.AreEqual(0xDF, testData[1]);
+            Assert.AreEqual(0xF6, testData[2]);
+            Assert.AreEqual(0x3C, testData[3]);
+        }
+
+        [TestMethod, TestCategory("BinaryAccessor")]
+        public void SetAndGetUsingAccessor()
+        {
+            Int32 testValue = 268575300; // 0x10022244
+            byte[] testData = new byte[10];
+            BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(testData);
+
+            accessor.SetValue(testValue, 4);
+            Int32 readValue = accessor.GetInt32(4);
+
+            Assert.AreEqual(testValue, readValue);
+        }
+
+        [TestMethod, TestCategory("BinaryAccessor")]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SetValueThrowsIfOffsetIsInvalid()
+        {
+            BigEndianBinaryAccessor accessor = new BigEndianBinaryAccessor(new byte[] { 0xFF, 0xFE, 0xFD });
+            accessor.SetValue(0xFF, 10);
         }
     }
 }
