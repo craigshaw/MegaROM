@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness", "TestHarness\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegadriveUtilities.Tests", "MegadriveUtilities.Tests\MegadriveUtilities.Tests.csproj", "{70F6E3C5-17E8-48E9-A4C0-0C1AB5D17B9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChecksumValidator", "ChecksumValidator\ChecksumValidator.csproj", "{2948D266-3EEC-4292-B015-1E61C4410E60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{70F6E3C5-17E8-48E9-A4C0-0C1AB5D17B9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70F6E3C5-17E8-48E9-A4C0-0C1AB5D17B9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70F6E3C5-17E8-48E9-A4C0-0C1AB5D17B9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2948D266-3EEC-4292-B015-1E61C4410E60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2948D266-3EEC-4292-B015-1E61C4410E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2948D266-3EEC-4292-B015-1E61C4410E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2948D266-3EEC-4292-B015-1E61C4410E60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

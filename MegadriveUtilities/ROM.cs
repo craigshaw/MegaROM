@@ -45,6 +45,12 @@ namespace MegadriveUtilities
 
                 return checksum;
             }
+
+            set
+            {
+                checksum = value;
+                rom.SetValue(checksum, 0x18E);
+            }
         }
 
         public UInt32 StartAddress
