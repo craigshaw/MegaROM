@@ -1,6 +1,7 @@
 ﻿using ChecksumValidator.DTOs;
 using ChecksumValidator.Transaction_Scripts;
 using System;
+using System.IO;
 
 namespace ChecksumValidator
 {
@@ -18,7 +19,17 @@ namespace ChecksumValidator
 
             try
             {
-                ValidateChecksum(args[0]);
+                string romPath = args[0];
+
+                if(!File.Exists(romPath))
+                {
+                    Console.WriteLine("{0} isn't a valid file path", romPath);
+                }
+                else
+                {
+                    ValidateChecksum(romPath);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -37,18 +48,22 @@ namespace ChecksumValidator
 
         private void DisplayResults(ValidationResults results)
         {
-            Console.WriteLine("Rom file {0} {1} updated", results.ROMFilePath, results.HasChanged ? "was" : "wasn't");
+            Console.WriteLine("ROM file {0}", results.ROMFilePath);
 
             if (results.HasChanged)
+            {
                 Console.WriteLine("Checksum updated from 0x{0:X4} to 0x{1:X4}", results.ActualChecksum, results.CalculatedChecksum);
+            }
             else
-                Console.WriteLine("Checksum is 0x{0:X4}", results.ActualChecksum);
+            {
+                Console.WriteLine("Checksum is correct (0x{0:X4}), no changes made", results.ActualChecksum);
+            }
         }
 
         private void ShowUsageAndQuit()
         {
-            Console.WriteLine("Usage: ConsoleValidator.exe <.md to validate>");
-            Console.WriteLine("Example: ConsoleValidator.exe \"c:\\roms\\Road Rash II (USA, Europe).md\"");
+            Console.WriteLine("Usage: ChecksumValidator.exe <.md to validate>");
+            Console.WriteLine("Example: ChecksumValidator.exe \"c:\\roms\\Road Rash II (USA, Europe).md\"");
 
             Environment.Exit(1);
         }
